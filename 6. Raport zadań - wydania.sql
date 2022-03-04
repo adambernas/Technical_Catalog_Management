@@ -1,13 +1,18 @@
+--Tytu³: Raport wszystkich zadañ w wydaniach
+--Autor: Adam Bernaœ
+--Update: 03-03-2022
+--Version v1.1
+
+--Podgl¹du widoku
+/*
+SELECT * FROM View_TaskReport
+*/
+
 USE TechnicalCatalogManagement
 GO
 --Usuñ widok jeœli istnieje
 IF OBJECT_ID('View_TaskReport') IS NOT NULL DROP VIEW View_TaskReport
 GO
-
---Skrót do podgl¹du widoku
-/*
-SELECT * FROM View_TaskReport
-*/
 
 --Tworzenie widoku z opcj¹ SCHEMABINDING oraz CHECK OPTION
 CREATE VIEW View_TaskReport WITH SCHEMABINDING
