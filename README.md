@@ -1,9 +1,5 @@
 ﻿# Technical_Catalog_Management
 
-Witaj w moim repozytorium :)
-Cieszę się że zainteresowałeś się moim projektem.
-Poniżej przedstawiam krótki opis który pozwoli Ci się z nim zapoznać. Zapraszam
-
 Przedstawiony projekt jest na etapie roboczym, nie można go traktować jako kompletny i pozbawiony ewentualnych błędów.
 
 Projekt: Zarządzanie Katalogiem Technicznym
