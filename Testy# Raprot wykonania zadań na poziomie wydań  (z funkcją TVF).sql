@@ -1,9 +1,9 @@
---Tytu³: Testowy wariant raportu wydañ z procentowym podsumowaniem ich wykonania na podstawie zakoñczonych zadañ
---Opis:  Wykorzystuje funkcje tabelaryczn¹
---Autor: Adam Bernaœ
+ï»¿--TytuÅ‚: Testowy wariant raportu wydaÅ„ z procentowym podsumowaniem ich wykonania na podstawie zakoÅ„czonych zadaÅ„
+--Opis:  Wykorzystuje funkcje tabelarycznÄ…
+--Autor: Adam BernaÅ›
 --Update: 20-02-2022
 
-/* Funkcja tabelaryczna TVF tworz¹c¹ tabel¹ g³ówn¹ do raportu. 
+/* Funkcja tabelaryczna TVF tworzÄ…cÄ… tabelÄ… gÅ‚Ã³wnÄ… do raportu. 
 USE TechnicalCatalogManagement
 GO
 CREATE FUNCTION dbo.GetTableInReportPCLINE
@@ -27,8 +27,8 @@ JOIN DocumentItem		    as DI
 USE TechnicalCatalogManagement
 GO
 
-/* Tablica TaskQty sumuje liczbê otwartych oraz zamkniêtych zadañ dla ka¿dego dokumentu (wydania). Nie uwzglêdnia zadañ usuniêtych (IdTaskState = 6).
-S³u¿y do wyliczania procentu wykonanych zadañ */
+/* Tablica TaskQty sumuje liczbÄ™ otwartych oraz zamkniÄ™tych zadaÅ„ dla kaÅ¼dego dokumentu (wydania). Nie uwzglÄ™dnia zadaÅ„ usuniÄ™tych (IdTaskState = 6).
+SÅ‚uÅ¼y do wyliczania procentu wykonanych zadaÅ„ */
 
 WITH TaskQty as 
 (
