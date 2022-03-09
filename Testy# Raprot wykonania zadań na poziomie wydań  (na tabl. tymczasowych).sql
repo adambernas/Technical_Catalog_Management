@@ -1,7 +1,7 @@
-/*
-Tytu≥: Testowy wariant tworzenia raportu wydania z podsumowaniem procentowym ich wykonania na podstawie zakoÒczonych zadaÒ.
+Ôªø/*
+Tytu≈Ç: Testowy wariant tworzenia raportu wydania z podsumowaniem procentowym ich wykonania na podstawie zako≈Ñczonych zada≈Ñ.
 Opis: Raport oparty na tabelach tymczasowych
-Autor: Adam Bernaú
+Autor: Adam Berna≈õ
 Update: 26-09-2021
 */
 
