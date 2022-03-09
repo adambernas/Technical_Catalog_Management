@@ -1,7 +1,7 @@
-/*
-Tytu³: Testowy wariant tworzenia raportu wydania z podsumowaniem procentowym ich wykonania na podstawie zakoñczonych zadañ.
-Opis: Tabela tworz¹ca kolumny wpisana w tabele tymczasow¹
-Autor: Adam Bernaœ
+ï»¿/*
+TytuÅ‚: Testowy wariant tworzenia raportu wydania z podsumowaniem procentowym ich wykonania na podstawie zakoÅ„czonych zadaÅ„.
+Opis: Tabela tworzÄ…ca kolumny wpisana w tabele tymczasowÄ…
+Autor: Adam BernaÅ›
 Update: 20-02-2022
 */
 
@@ -11,7 +11,7 @@ GO
 USE TechnicalCatalogManagement
 GO
 
---Tworzenie tabeli tymczasowej przechowuj¹cej okreœlone dane z zapytania ³¹cz¹cego 3 tabele. Wykorzystana do tworzenia kolumn raportu g³ównego.
+--Tworzenie tabeli tymczasowej przechowujÄ…cej okreÅ›lone dane z zapytania Å‚Ä…czÄ…cego 3 tabele. Wykorzystana do tworzenia kolumn raportu gÅ‚Ã³wnego.
 SELECT  
 D.IdDT, D.IdDoc, D.ObjectId,
 DI.IdDTI, DI.DocumentValue,
@@ -24,8 +24,8 @@ JOIN DocumentItem		  as DI
 	ON DI.IdDTI = DTI.IdDTI
 	and DI.IdDoc = D.IdDoc;
 
-/* Tablica TaskQty sumuje liczbê otwartych oraz zamkniêtych zadañ dla ka¿dego dokumentu (wydania). Nie uwzglêdnia zadañ usuniêtych (IdTaskState = 6).
-Pozwala wyliczyæ procent wykonanych zadañ.
+/* Tablica TaskQty sumuje liczbÄ™ otwartych oraz zamkniÄ™tych zadaÅ„ dla kaÅ¼dego dokumentu (wydania). Nie uwzglÄ™dnia zadaÅ„ usuniÄ™tych (IdTaskState = 6).
+Pozwala wyliczyÄ‡ procent wykonanych zadaÅ„.
 */
 WITH TaskQty as 
 (
@@ -50,31 +50,31 @@ E.DocumentValue as [Grupa],
 F.DocumentValue as [Typoszereg],
 G.PctEnd		as [% wykonania]
 FROM
--- Dane do kolumny [Kod] Raportu g³ówngo
+-- Dane do kolumny [Kod] Raportu gÅ‚Ã³wngo
 	(SELECT * FROM #Alfa WHERE CodeDTI = 'CODE_R')	    as A
 JOIN
--- Dane do kolumny [Nazwa] Raportu g³ówngo
+-- Dane do kolumny [Nazwa] Raportu gÅ‚Ã³wngo
 	(SELECT * FROM #Alfa WHERE CodeDTI = 'NAME_R')		as B
 ON  a.IdDoc = b.IdDoc
 JOIN
--- Dane do kolumny [Zakres] Raportu g³ówngo
+-- Dane do kolumny [Zakres] Raportu gÅ‚Ã³wngo
 	(SELECT * FROM #Alfa WHERE CodeDTI = 'SCOPE_R')	    as C
 ON b.IdDoc = c.IdDoc
 JOIN
--- Dane do kolumny [Producent] Raportu g³ówngo
+-- Dane do kolumny [Producent] Raportu gÅ‚Ã³wngo
 	(SELECT * FROM #Alfa WHERE CodeDTI = 'PRODUCER_R')  as D
 ON c.IdDoc = d.IdDoc
 JOIN
--- Dane do kolumny [Grupa] Raportu g³ówngo
+-- Dane do kolumny [Grupa] Raportu gÅ‚Ã³wngo
 	(SELECT * FROM #Alfa WHERE CodeDTI = 'GROUP_R')		as E
 ON d.IdDoc = e.IdDoc
 JOIN
--- Dane do kolumny [Typoszereg] Raportu g³ówngo
+-- Dane do kolumny [Typoszereg] Raportu gÅ‚Ã³wngo
 	(SELECT * FROM #Alfa WHERE CodeDTI = 'NAME_LINE_R') as F
 ON e.IdDoc = f.IdDoc
 JOIN
-/* Dane do kolumny [% wykonania] Raportu g³ówngo. 
-Dzieli równicê pomiêdzy wszystkimi zadaniami a zadaniami otwartymi przez liczbê wszystkich zadañ a nastêpnie mno¿y przez 100 uzyskuj¹c wynik procentowy */
+/* Dane do kolumny [% wykonania] Raportu gÅ‚Ã³wngo. 
+Dzieli rÃ³wnicÄ™ pomiÄ™dzy wszystkimi zadaniami a zadaniami otwartymi przez liczbÄ™ wszystkich zadaÅ„ a nastÄ™pnie mnoÅ¼y przez 100 uzyskujÄ…c wynik procentowy */
 (SELECT *,(100 * (TQ.TaskQty - TQ.OpenTaskQty) / TQ.TaskQty) as PctEnd
 FROM TaskQty as TQ)											 as G
 ON f.ObjectId = g.ObjectId
