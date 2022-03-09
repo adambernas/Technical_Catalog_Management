@@ -1,25 +1,25 @@
---Tytu³: Raport typoszeregów z podsumowaniem procentowym ich wykonania na podstawie zakoñczonych zadañ w wydaniach.
---Autor: Adam Bernaœ
+ï»¿--TytuÅ‚: Raport typoszeregÃ³w z podsumowaniem procentowym ich wykonania na podstawie zakoÅ„czonych zadaÅ„ w wydaniach.
+--Autor: Adam BernaÅ›
 --Update: 20-02-2022
 --Version v1.3
 
-/* Podgl¹d raportu:
+/* PodglÄ…d raportu:
 SELECT * FROM dbo.View_LineReport
 */
 
 USE TechnicalCatalogManagement
 GO
---Usuñ widok je¿eli istnieje
+--UsuÅ„ widok jeÅ¼eli istnieje
 IF OBJECT_ID ('dbo.View_LineReport') IS NOT NULL DROP VIEW dbo.View_LineReport
 GO
 
---Tworzenie widoku z opcj¹ SCHEMABINDING oraz CHECK OPTION
+--Tworzenie widoku z opcjÄ… SCHEMABINDING oraz CHECK OPTION
 CREATE VIEW dbo.View_LineReport
 WITH SCHEMABINDING
 AS
 
-/* Tablica TaskQty sumuje liczbê otwartych oraz zamkniêtych zadañ dla ka¿dego dokumentu (wydania). Nie uwzglêdnia zadañ usuniêtych (IdTaskState = 6).
-S³u¿y do wyliczania procentu wykonanych zadañ */
+/* Tablica TaskQty sumuje liczbÄ™ otwartych oraz zamkniÄ™tych zadaÅ„ dla kaÅ¼dego dokumentu (wydania). Nie uwzglÄ™dnia zadaÅ„ usuniÄ™tych (IdTaskState = 6).
+SÅ‚uÅ¼y do wyliczania procentu wykonanych zadaÅ„ */
 
 With TaskQty as 
 (
@@ -34,7 +34,7 @@ LEFT JOIN dbo.TaskState as TS
 		WHERE T.IdTaskState <> 6
 GROUP BY T.ObjectId ),
 
--- Tablica Tab z tabel¹ g³ówn¹ do raportu
+-- Tablica Tab z tabelÄ… gÅ‚Ã³wnÄ… do raportu
 Tab as
 (
 SELECT  
@@ -48,7 +48,7 @@ JOIN dbo.DocumentItem		  as DI
 	ON DI.IdDTI = DTI.IdDTI
 	AND DI.IdDoc = D.IdDoc
 )
--- Tworzenie Raportu g³ównego
+-- Tworzenie Raportu gÅ‚Ã³wnego
 SELECT
 	a.DocumentValue as [Kod],
 	b.DocumentValue as [Nazwa],
@@ -86,18 +86,18 @@ JOIN
 	WHERE CodeDTI = 'GROUP_L')						as E
 ON d.IdDoc = e.IdDoc
 JOIN
--- Relacja w celu pozyskania kolumny Document.ObjectId które s¹ przypisane tylko do wydañ, kolumna ta s³u¿y do po³¹czenia z tablic¹ TaskQty
+-- Relacja w celu pozyskania kolumny Document.ObjectId ktÃ³re sÄ… przypisane tylko do wydaÅ„, kolumna ta sÅ‚uÅ¼y do poÅ‚Ä…czenia z tablicÄ… TaskQty
 	dbo.Document									as D2
 	ON D2.IdDocRelation = e.IdDoc
 JOIN 
 /* Dane do kolumny [% wykonania]
-Dzieli ró¿nicê pomiêdzy wszystkimi zadaniami a zadaniami otwartymi przez liczbê wszystkich zadañ a nastêpnie mno¿y przez 100 uzyskuj¹c wynik procentowy */
+Dzieli rÃ³Å¼nicÄ™ pomiÄ™dzy wszystkimi zadaniami a zadaniami otwartymi przez liczbÄ™ wszystkich zadaÅ„ a nastÄ™pnie mnoÅ¼y przez 100 uzyskujÄ…c wynik procentowy */
 	(SELECT TQ.ObjectId,TQ.OpenTaskQty,TQ.TaskQty, 
 	(100 * (TQ.TaskQty - TQ.OpenTaskQty) / TQ.TaskQty) as PctEnd
 	FROM TaskQty as TQ)								   as F
 ON D2.ObjectId = f.ObjectId
 
---Grupowanie do uzyskania œredniej dla ca³ego wyposzeregu
+--Grupowanie do uzyskania Å›redniej dla caÅ‚ego wyposzeregu
 GROUP BY 
 a.DocumentValue,
 b.DocumentValue,
