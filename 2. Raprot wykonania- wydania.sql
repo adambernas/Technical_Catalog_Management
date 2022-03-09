@@ -1,26 +1,26 @@
---Tytu³: Raport wydañ z procentowym podsumowaniem wykonania na podstawie zakoñczonych zadañ.
---Autor: Adam Bernaœ
+ï»¿--TytuÅ‚: Raport wydaÅ„ z procentowym podsumowaniem wykonania na podstawie zakoÅ„czonych zadaÅ„.
+--Autor: Adam BernaÅ›
 --Update: 20-02-2022
 --Version v1.3
 
-/*Podgl¹d raportu
+/*PodglÄ…d raportu
 SELECT * FROM dbo.View_ReleaseReport
 */
 
 USE TechnicalCatalogManagement
 GO
---Usuñ widok je¿eli istnieje
+--UsuÅ„ widok jeÅ¼eli istnieje
 IF OBJECT_ID ('dbo.View_ReleaseReport') IS NOT NULL DROP VIEW dbo.View_ReleaseReport
 GO
 
---Tworzenie widoku z opcj¹ SCHEMABINDING oraz CHECK OPTION
+--Tworzenie widoku z opcjÄ… SCHEMABINDING oraz CHECK OPTION
 
 CREATE VIEW dbo.View_ReleaseReport
 WITH SCHEMABINDING
 AS
 
-/* Tablica TaskQty sumuje liczbê otwartych oraz zamkniêtych zadañ dla ka¿dego dokumentu (wydania). Nie uwzglêdnia zadañ usuniêtych (IdTaskState = 6).
-S³u¿y do wyliczania procentu wykonanych zadañ */
+/* Tablica TaskQty sumuje liczbÄ™ otwartych oraz zamkniÄ™tych zadaÅ„ dla kaÅ¼dego dokumentu (wydania). Nie uwzglÄ™dnia zadaÅ„ usuniÄ™tych (IdTaskState = 6).
+SÅ‚uÅ¼y do wyliczania procentu wykonanych zadaÅ„ */
 
 WITH TaskQty as 
 (
@@ -36,7 +36,7 @@ LEFT JOIN dbo.TaskState as TS
 GROUP BY T.ObjectId
 ),
 
---Tablica Tab z tabel¹ g³ówn¹ do raportu
+--Tablica Tab z tabelÄ… gÅ‚Ã³wnÄ… do raportu
 Tab as
 (
 SELECT  
@@ -50,7 +50,7 @@ JOIN dbo.DocumentItem		  as DI
 	ON DI.IdDTI = DTI.IdDTI
 	AND DI.IdDoc = D.IdDoc
 )
--- Tworzenie Raportu g³ównego
+-- Tworzenie Raportu gÅ‚Ã³wnego
 SELECT 
 A.DocumentValue as [Kod wydania],
 B.DocumentValue as [Nazwa],
@@ -90,7 +90,7 @@ JOIN
 ON e.IdDoc = f.IdDoc
 JOIN
 /* Dane do kolumny [% wykonania]
-Dzieli ró¿nicê pomiêdzy wszystkimi zadaniami a zadaniami otwartymi przez liczbê wszystkich zadañ a nastêpnie mno¿y przez 100 uzyskuj¹c wynik procentowy */
+Dzieli rÃ³Å¼nicÄ™ pomiÄ™dzy wszystkimi zadaniami a zadaniami otwartymi przez liczbÄ™ wszystkich zadaÅ„ a nastÄ™pnie mnoÅ¼y przez 100 uzyskujÄ…c wynik procentowy */
 	(SELECT TQ.ObjectId, TQ.TaskQty, TQ.OpenTaskQty, 
 	(100 * (TQ.TaskQty - TQ.OpenTaskQty) / TQ.TaskQty)							as PctEnd
 	FROM TaskQty as TQ)															as G
