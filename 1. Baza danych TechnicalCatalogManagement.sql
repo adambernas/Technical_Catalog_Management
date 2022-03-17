@@ -126,7 +126,7 @@ INSERT dbo.Dictionary (IdDict, NameDict) VALUES
 (3, N'Grupy produktów')
 
 --Wprowadzanie danych do tabeli DictionaryItem
-INSERT dbo.DictionaryItem (IdDicItem, IdDict, Value, CodeValue) VALUES 
+INSERT INTO dbo.DictionaryItem (IdDicItem, IdDict, Value, CodeValue) VALUES 
 (1, 1, N'Pełny', N'FULL'),
 (2, 1, N'Podstawowy', N'BASIC'),
 (3, 1, N'Tylko opis', N'DESC'),
@@ -150,7 +150,7 @@ INSERT dbo.DictionaryItem (IdDicItem, IdDict, Value, CodeValue) VALUES
 
 --Wprowadzanie danych do tabeli Document
 SET IDENTITY_INSERT dbo.Document ON
-INSERT dbo.Document (IdDoc, IdDT, DocName, IdDocState, IdDocRelation, ObjectId) VALUES 
+INSERT INTO dbo.Document (IdDoc, IdDT, DocName, IdDocState, IdDocRelation, ObjectId) VALUES 
 (1, 1, N'Typoszereg Danfoss MTZ', NULL, NULL, N'DOC1'),
 (2, 1, N'Typoszereg Danfoss NTZ', NULL, NULL, N'DOC2'),
 (3, 2, N'Wydanie Danfoss MTZ-2020', 2, 1, N'DOC3'),
@@ -167,7 +167,7 @@ SET IDENTITY_INSERT dbo.Document OFF
 
 --Wprowadzanie danych do tabeli DocumentItem
 SET IDENTITY_INSERT dbo.DocumentItem ON
-INSERT dbo.DocumentItem (IdDocI, IdDTI, IdDoc, DocumentValue) VALUES 
+INSERT INTO dbo.DocumentItem (IdDocI, IdDTI, IdDoc, DocumentValue) VALUES 
 (1, 1, 1, N'DAN-MTZ'),
 (2, 2, 1, N'MTZ'),
 (3, 3, 1, N'Pełny'),
@@ -239,12 +239,12 @@ INSERT dbo.DocumentItem (IdDocI, IdDTI, IdDoc, DocumentValue) VALUES
 SET IDENTITY_INSERT dbo.DocumentItem OFF
 
 --Wprowadzanie danych do tabeli DocumentTemplate
-INSERT dbo.DocumentTemplate (IdDT, CodeDT, NameDT) VALUES 
+INSERT INTO dbo.DocumentTemplate (IdDT, CodeDT, NameDT) VALUES 
 (1, N'PCLINE', N'Typoszereg'),
 (2, N'PCRELEASE', N'Wydanie')
 
 --Wprowadzanie danych do tabeli DocumentTemplateItem
-INSERT dbo.DocumentTemplateItem (IdDTI, IdDT, CodeDTI, NameDTI) VALUES 
+INSERT INTO dbo.DocumentTemplateItem (IdDTI, IdDT, CodeDTI, NameDTI) VALUES 
 (1, 1, N'CODE_L', N'Kod'),
 (2, 1, N'NAME_L', N'Nazwa'),
 (3, 1, N'SCOPE_L', N'Zakres'),
@@ -259,7 +259,7 @@ INSERT dbo.DocumentTemplateItem (IdDTI, IdDT, CodeDTI, NameDTI) VALUES
 
 --Wprowadzanie danych do tabeli Task
 SET IDENTITY_INSERT dbo.Task ON 
-INSERT dbo.Task (IdTask, IdTaskState, ObjectId, Name) VALUES 
+INSERT INTO dbo.Task (IdTask, IdTaskState, ObjectId, Name) VALUES 
 (1, 1, N'DOC3', N'Zadanie 1 dla wydania DAN-MTZ-2020'),
 (2, 1, N'DOC3', N'Zadanie 2 dla wydania DAN-MTZ-2020'),
 (3, 1, N'DOC3', N'Zadanie 3 dla wydania DAN-MTZ-2020'),
@@ -296,7 +296,7 @@ INSERT dbo.Task (IdTask, IdTaskState, ObjectId, Name) VALUES
 SET IDENTITY_INSERT dbo.Task OFF
 
 --Wprowadzanie danych do tabeli TaskList
-INSERT dbo.TasksList (IdTaskList, TaskName, CodeScope) VALUES 
+INSERT INTO dbo.TasksList (IdTaskList, TaskName, CodeScope) VALUES 
 (1, N'Zadanie 1 dla wydania ', N'FULL'),
 (2, N'Zadanie 2 dla wydania ', N'FULL'),
 (3, N'Zadanie 3 dla wydania ', N'FULL'),
@@ -315,7 +315,7 @@ INSERT dbo.TasksList (IdTaskList, TaskName, CodeScope) VALUES
 (16, N'Zadanie 3 dla wydania ', N'DESC')
 
 --Wprowadzanie danych do tabeli TaskState
-INSERT dbo.TaskState (IdTaskState, Name, IsClosed) VALUES 
+INSERT INTO dbo.TaskState (IdTaskState, Name, IsClosed) VALUES 
 (1, N'Nowy', 0),
 (2, N'Realizowany', 0),
 (3, N'Wstrzymany', 0),
@@ -328,11 +328,13 @@ ALTER TABLE dbo.DictionaryItem
 	ADD CONSTRAINT FK_DictionaryItem_Dictionary 
 	FOREIGN KEY(IdDict)
 	REFERENCES dbo.Dictionary(IdDict)
+	ON UPDATE CASCADE
 GO
 ALTER TABLE dbo.Document 
 	ADD CONSTRAINT FK_Document_DocumentTemplate 
 	FOREIGN KEY(IdDT)
 	REFERENCES dbo.DocumentTemplate(IdDT)
+	ON UPDATE CASCADE
 GO
 ALTER TABLE dbo.Document
 	ADD CONSTRAINT FK_Document_TaskState 
@@ -348,12 +350,13 @@ ALTER TABLE dbo.DocumentItem
 	ADD CONSTRAINT FK_DocumentItem_Document 
 	FOREIGN KEY(IdDoc)
 	REFERENCES dbo.Document(IdDoc)
-	ON DELETE CASCADE
+	ON DELETE CASCADE ON UPDATE CASCADE
 GO
 ALTER TABLE dbo.DocumentItem  
 	ADD CONSTRAINT FK_DocumentItem_DocumentTemplateItem 
 	FOREIGN KEY(IdDTI)
 	REFERENCES dbo.DocumentTemplateItem(IdDTI)
+	ON UPDATE CASCADE
 GO
 ALTER TABLE dbo.DocumentTemplateItem 
 	ADD CONSTRAINT FK_DocumentTemplateItem_DocumentTemplate 
@@ -364,6 +367,7 @@ ALTER TABLE dbo.Task
 	ADD CONSTRAINT FK_Task_TaskState 
 	FOREIGN KEY(IdTaskState)
 	REFERENCES dbo.TaskState(IdTaskState)
+	ON UPDATE CASCADE
 GO
 ALTER TABLE dbo.Task
 	ADD CONSTRAINT FK_Task_Document 
