@@ -1,19 +1,19 @@
---Tytu≥: Aktualizacja listy zadaÒ po zmianie nazwy wydania.
---Opis: Gdy wskazany dokument juø istnieje procedura blokuje zmianÍ listy zadaÒ na inny zakres co odzwierciedla prawid≥owπ logikÍ aplikacji.
---		W repozytorium znajduje siÍ 2 wersja tej procedury ktÛra umoøliwia zmiany listy zadaÒ istniejπcych wydaÒ.
---Autor: Adam Bernaú
+Ôªø--Tytu≈Ç: Aktualizacja listy zada≈Ñ po zmianie nazwy wydania.
+--Opis: Gdy wskazany dokument ju≈º istnieje procedura blokuje zmianƒô listy zada≈Ñ na inny zakres co odzwierciedla prawid≈ÇowƒÖ logikƒô aplikacji.
+--		W repozytorium znajduje siƒô 2 wersja tej procedury kt√≥ra umo≈ºliwia zmiany listy zada≈Ñ istniejƒÖcych wyda≈Ñ.
+--Autor: Adam Berna≈õ
 --Update: 23-02-2022
 --Wersja: 1.4
 
-/*Opis obs≥ugi procedury (Zmienne w aplikacji sπ obs≥ugiwane poprzez interfejs graficzny)
+/*Opis obs≈Çugi procedury (Zmienne w aplikacji sƒÖ obs≈Çugiwane poprzez interfejs graficzny)
 
-@IdDoc				- Podaj istniejπcy numer Id dokumentu wydania gdzie chcesz dokonaÊ zmiany
-@DocumentValueId_7  - Podaj nowπ nazwÍ wydania
-@StateName          - Podaj zakres wydania ('Pe≥ny' , 'Podstawowy' , 'Tylko opis')
+@IdDoc				- Podaj istniejƒÖcy numer Id dokumentu wydania gdzie chcesz dokonaƒá zmiany
+@DocumentValueId_7  - Podaj nowƒÖ nazwƒô wydania
+@StateName          - Podaj zakres wydania ('Pe≈Çny' , 'Podstawowy' , 'Tylko opis')
 @IdDocState			- Podaj id statusu dokumentu od 1 do 6
-					  (1 -Nowy, 2 -Realizowane, 3 -Wstrzymane, 4 -Odrzucony, 5 -Wykonany, 6-UsuniÍte) */
+					  (1 -Nowy, 2 -Realizowane, 3 -Wstrzymane, 4 -Odrzucony, 5 -Wykonany, 6-Usuniƒôte) */
 
-/* SkrÛt do obs≥ugi procedury:
+/* Skr√≥t do obs≈Çugi procedury:
 Exec UpdateTask
 @IdDoc = 12,
 @DocumentValueId_7 = '2024',
@@ -23,7 +23,7 @@ Exec UpdateTask
 
 USE TechnicalCatalogManagement
 GO
---UsuÒ procedure jeøeli istnieje
+--Usu≈Ñ procedure je≈ºeli istnieje
 IF OBJECT_ID ('dbo.UpdateTask') IS NOT NULL DROP PROC dbo.UpdateTask
 GO
 
@@ -32,7 +32,7 @@ CREATE PROC dbo.UpdateTask
 
 --Deklarowanie zmiennych
 
---Zmienne wprowadzane przez uøytkownika
+--Zmienne wprowadzane przez u≈ºytkownika
 @IdDoc as INT = NULL,					   
 @DocumentValueId_7 as nvarchar(20)= NULL,  
 @StateName as nvarchar(10) = NULL,		   
@@ -47,10 +47,10 @@ CREATE PROC dbo.UpdateTask
 @DocumentValueId_6 as nvarchar(30) = NULL  
 
 AS
---Otwarcie bloku do obs≥ugi b≥ÍdÛw
+--Otwarcie bloku do obs≈Çugi b≈Çƒôd√≥w
 BEGIN TRY
 
---RozpoczÍcie transakcji
+--Rozpoczƒôcie transakcji
 BEGIN TRAN
 SET NOCOUNT ON
 
@@ -61,7 +61,7 @@ IF NOT EXISTS
 			CodeValue IN ('FULL', 'BASIC', 'DESC'))
 BEGIN
 	ROLLBACK TRAN
-	PRINT 'B£•D: Podano b≥Ídny zakres wydania'
+	PRINT 'B≈ÅƒÑD: Podano b≈Çƒôdny zakres wydania'
 	RETURN
 END; 
 
@@ -71,11 +71,11 @@ IF NOT EXISTS
 	 WHERE  IdDoc = @IdDoc)
 BEGIN
 	ROLLBACK TRAN
-	PRINT 'B£•D: Nie ma takiego numeru dokumentu'
+	PRINT 'B≈ÅƒÑD: Nie ma takiego numeru dokumentu'
 	RETURN
 END;
 
---Blokada prÛby zmiany listy zadaÒ w wygenerowanym wydaniu
+--Blokada pr√≥by zmiany listy zada≈Ñ w wygenerowanym wydaniu
 IF	@StateName <> (SELECT DocumentValue 
 				  FROM dbo.DocumentItem as DI
 				  JOIN dbo.DocumentTemplateItem as DTI
@@ -90,7 +90,7 @@ AND	@DocumentValueId_7 = (SELECT DocumentValue
 								WHERE IdDoc = @IdDoc AND
 									  DTI.CodeDTI = 'NAME_R')
 BEGIN
-	--Zmienna @CheckStateName sprawdza nazwÍ aktualnego zakresu zadaÒ
+	--Zmienna @CheckStateName sprawdza nazwƒô aktualnego zakresu zada≈Ñ
 	DECLARE @CheckStateName NVARCHAR(15)
 	SET @CheckStateName = (SELECT DocumentValue 
 						   FROM dbo.DocumentItem as DI
@@ -99,13 +99,13 @@ BEGIN
 									WHERE IdDoc = @IdDoc AND
 										  DTI.CodeDTI = 'SCOPE_R')
 
-PRINT 'B£•D: Wydanie ' +'"'+ @DocumentValueId_7 +'"'+ ' ma juø wygenerowanπ listÍ zadaÒ w zakresie '+'"'+ @CheckStateName +'".'
-PRINT 'Aby stworzyÊ nowπ listÍ usuÒ obecne wydanie lub stwÛrz nowe.'
+PRINT 'B≈ÅƒÑD: Wydanie ' +'"'+ @DocumentValueId_7 +'"'+ ' ma ju≈º wygenerowanƒÖ listƒô zada≈Ñ w zakresie '+'"'+ @CheckStateName +'".'
+PRINT 'Aby stworzyƒá nowƒÖ listƒô usu≈Ñ obecne wydanie lub stw√≥rz nowe.'
 	ROLLBACK TRAN
 	RETURN
 END;
 
---Weryfikacja czy podana nowa nazwa wydania juø istnieje
+--Weryfikacja czy podana nowa nazwa wydania ju≈º istnieje
 IF @DocumentValueId_7 IN
 (	SELECT DI.DocumentValue --,D.IdDoc as IdDocWydania, D.IdDocRelation
 	FROM dbo.DocumentItem		  as DI
@@ -125,7 +125,7 @@ IF @DocumentValueId_7 IN
 									  D.IdDoc = @IdDoc )
 )
 BEGIN
-	PRINT 'B£•D: Podana nazwa wydania ' +'"'+ @DocumentValueId_7 +'"'+ ' juz istnieje'
+	PRINT 'B≈ÅƒÑD: Podana nazwa wydania ' +'"'+ @DocumentValueId_7 +'"'+ ' juz istnieje'
 	ROLLBACK TRAN
 	RETURN
 END; 
@@ -141,22 +141,22 @@ SET @CodeDT =
 --Weryfikacja czy wskazany dokument nie jest typoszeregiem
 IF @CodeDT = 'PCLINE'
 BEGIN
-	PRINT 'B£•D: Wskazany dokument to typoszereg, zadania generuje siÍ w wydaniu'
+	PRINT 'B≈ÅƒÑD: Wskazany dokument to typoszereg, zadania generuje siƒô w wydaniu'
 	ROLLBACK TRAN
 	RETURN
 END;
 
---Weryfikacja czy wskazane wydanie ma odpowiedni status do generowania zadaÒ
+--Weryfikacja czy wskazane wydanie ma odpowiedni status do generowania zada≈Ñ
 IF  @CodeDT = 'PCRELEASE' and 
 	@IdDocState <> 2 or @IdDocState IS NULL
 BEGIN
 	ROLLBACK TRAN
 
---Zmienna do okreúlenia nazwy dokumentu
+--Zmienna do okre≈õlenia nazwy dokumentu
 DECLARE @PrintMessage NVARCHAR(20);
 SET @PrintMessage = (SELECT Name FROM dbo.TaskState WHERE IdTaskState = @IdDocState)
 
-	PRINT 'B£•D: Zadania moøna generowaÊ tylko gdy dokument ma status "Realizowane". ' +
+	PRINT 'B≈ÅƒÑD: Zadania mo≈ºna generowaƒá tylko gdy dokument ma status "Realizowane". ' +
 	'Obecnie status dokumentu to: ' + '"'+ @PrintMessage +'"'
 	RETURN
 END;
@@ -193,7 +193,7 @@ UPDATE TabForUpdate_2
 		deleted.DocumentValue as Old_SCOPE_R,
 		inserted.DocumentValue as New_SCOPE_R;
 
--- Aktualizacja kodu wydania w polu dokumentu wydania (kod sk≥ada siÍ z 3 czÍúci odzielonych znaikiem "-")
+-- Aktualizacja kodu wydania w polu dokumentu wydania (kod sk≈Çada siƒô z 3 czƒô≈õci odzielonych znaikiem "-")
 WITH TabForUpdate_3 AS
 (
 SELECT DocumentValue 
@@ -205,7 +205,7 @@ JOIN DocumentTemplateItem as DTI
 ) 
 UPDATE TabForUpdate_3
 	SET DocumentValue = 
-	    /* 1 czÍúÊ */
+	    /* 1 czƒô≈õƒá */
 	 (	SELECT CodeValue FROM dbo.DictionaryItem WHERE [Value] = 
 		  (	SELECT DocumentValue 
 			FROM dbo.DocumentItem as DI 
@@ -213,21 +213,21 @@ UPDATE TabForUpdate_3
 				ON DI.IdDTI = DTI.IdDTI
 					WHERE DI.IdDoc = @IdDoc AND DTI.CodeDTI = 'PRODUCER_R' )
 	 )
-	  + '-' /* 2 czÍúÊ */
+	  + '-' /* 2 czƒô≈õƒá */
 	  +	  (	SELECT DocumentValue 
 			FROM dbo.DocumentItem as DI 
 			JOIN DocumentTemplateItem as DTI 
 				ON DI.IdDTI = DTI.IdDTI
 					WHERE DI.IdDoc = @IdDoc AND DTI.CodeDTI = 'NAME_LINE_R' )
-	  + '-' /* 3 czÍúÊ */
+	  + '-' /* 3 czƒô≈õƒá */
 	  + @DocumentValueId_7
 	  OUTPUT
 		deleted.DocumentValue as Old_CODE_R,
 		inserted.DocumentValue as New_CODE_R;
 
 --Aktualizacja nazwy dokumentu wydania w dokumentach
-/*Opis: Nazwa dokumentu sk≥ada siÍ z 3 elementÛw. 
-		Zagnieødøone funkcjÍ okreúlajπ tylko ostatni fragment dokonujπc podmiany na wartoúÊ ze zmiennej*/
+/*Opis: Nazwa dokumentu sk≈Çada siƒô z 3 element√≥w. 
+		Zagnie≈ºd≈ºone funkcjƒô okre≈õlajƒÖ tylko ostatni fragment dokonujƒÖc podmiany na warto≈õƒá ze zmiennej*/
 
 WITH TabForUpdate_4 AS
 (
@@ -253,21 +253,21 @@ SET @DocumentValueId_6 = (SELECT DocumentValue
 						  WHERE DI.IdDoc = @IdDoc AND 
 								DTI.CodeDTI = 'CODE_R'); 
 
---Usuwanie starej wersji zadaÒ
+--Usuwanie starej wersji zada≈Ñ
 DELETE 
 	FROM dbo.Task
 	WHERE ObjectId = (SELECT ObjectId FROM dbo.Document WHERE IdDoc = @IdDoc);
 
 /*
-Generowanie zadaÒ do wydania w zaleønoúci od wskazanego zakresu. 
-Wydanie musi byÊ w statusie "Realizowane"
-Zadania domyúlnie majπ status "Nowy"
+Generowanie zada≈Ñ do wydania w zale≈ºno≈õci od wskazanego zakresu. 
+Wydanie musi byƒá w statusie "Realizowane"
+Zadania domy≈õlnie majƒÖ status "Nowy"
 */
 IF 
 	@CodeDT	= 'PCRELEASE' and 
 	@IdDocState = 2
 BEGIN
-	IF @StateName  = 'Pe≥ny'
+	IF @StateName  = 'Pe≈Çny'
 		INSERT INTO dbo.Task (IdTaskState,ObjectId,Name)
 		SELECT 1, @ObjectId, TaskName + @DocumentValueId_6 
 		FROM dbo.TasksList 
@@ -291,7 +291,7 @@ COMMIT TRAN
 
 END TRY
 
--- Obs≥uga b≥Ídu wycofuje transakcje i wyúwietla komunikat o nim
+-- Obs≈Çuga b≈Çƒôdu wycofuje transakcje i wy≈õwietla komunikat o nim
 BEGIN CATCH 
 
 IF ERROR_NUMBER() <> 0
@@ -299,10 +299,10 @@ IF ERROR_NUMBER() <> 0
 		ROLLBACK TRAN
 	END 
 
-	PRINT 'Numer b≥Ídu    : ' + CAST(ERROR_NUMBER() as varchar(30));
-	PRINT 'Komunikat b≥Ídu: ' + ERROR_MESSAGE();
-	PRINT 'WaønoúÊ b≥Ídu  : ' + CAST(ERROR_SEVERITY() AS VARCHAR(10));
-	PRINT 'Stan b≥Ídu     : ' + CAST(ERROR_STATE() AS VARCHAR(10));
-	PRINT 'Wiersz b≥Ídu   : ' + CAST(ERROR_LINE() AS VARCHAR(10));
+	PRINT 'Numer b≈Çƒôdu    : ' + CAST(ERROR_NUMBER() as varchar(30));
+	PRINT 'Komunikat b≈Çƒôdu: ' + ERROR_MESSAGE();
+	PRINT 'Wa≈ºno≈õƒá b≈Çƒôdu  : ' + CAST(ERROR_SEVERITY() AS VARCHAR(10));
+	PRINT 'Stan b≈Çƒôdu     : ' + CAST(ERROR_STATE() AS VARCHAR(10));
+	PRINT 'Wiersz b≈Çƒôdu   : ' + CAST(ERROR_LINE() AS VARCHAR(10));
 
 END CATCH
