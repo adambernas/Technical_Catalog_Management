@@ -1,15 +1,15 @@
---Tytu≥: Generowanie listy zadaÒ do wydania o statusie dokumentu "Nowy"
+Ôªø--Tytu≈Ç: Generowanie listy zada≈Ñ do wydania o statusie dokumentu "Nowy"
 --Opis:	Procedura po zmianie statusu dokumentu z "Nowy" na "Realizowany" generuje 
---      odpowiedniπ pulÍ zadaÒ na podstawie domyslnego zakresu typoszeregu.
---Autor: Adam Bernaú
+--      odpowiedniƒÖ pulƒô zada≈Ñ na podstawie domyslnego zakresu typoszeregu.
+--Autor: Adam Berna≈õ
 --Update: 27-02-2022
 --Wersia: 1.4
 
---SkrÛt do obs≥ugi procedury (Zmienne w aplikacji sπ obs≥ugiwane poprzez interfejs graficzny)
+--Skr√≥t do obs≈Çugi procedury (Zmienne w aplikacji sƒÖ obs≈Çugiwane poprzez interfejs graficzny)
 /*
-@IdDoc		- Podaj istniejπcy numer Id dokumentu wydania
+@IdDoc		- Podaj istniejƒÖcy numer Id dokumentu wydania
 @IdDocState - Podaj status dokumentu od 1 do 6
-			  (1 -Nowy, 2 -Realizowane, 3 -Wstrzymane, 4 -Odrzucony, 5 -Wykonany, 6-UsuniÍte)*/
+			  (1 -Nowy, 2 -Realizowane, 3 -Wstrzymane, 4 -Odrzucony, 5 -Wykonany, 6-Usuniƒôte)*/
 /*
 exec dbo.AddTask
 @IdDoc = 12,		   
@@ -18,7 +18,7 @@ exec dbo.AddTask
 
 USE TechnicalCatalogManagement
 GO
---UsuÒ procedure jeøeli istnieje
+--Usu≈Ñ procedure je≈ºeli istnieje
 IF OBJECT_ID ('dbo.AddTask') IS NOT NULL DROP PROC dbo.AddTask
 GO
 
@@ -27,7 +27,7 @@ CREATE PROC dbo.AddTask
 
 --Deklarowanie zmiennych
 
---Zmienne wprowadzane przez uøytkownika
+--Zmienne wprowadzane przez u≈ºytkownika
 @IdDoc as INT = NULL,   
 @IdDocState as INT = NULL,		
 			   
@@ -41,10 +41,10 @@ CREATE PROC dbo.AddTask
 --kod wydania		   
 @DocumentValueId_6 as nvarchar(20) = NULL
 AS
---Otwarcie bloku do obs≥ugi b≥ÍdÛw
+--Otwarcie bloku do obs≈Çugi b≈Çƒôd√≥w
 BEGIN TRY
 
---RozpoczÍcie transakcji
+--Rozpoczƒôcie transakcji
 BEGIN TRAN
 
 --Przypisanie numeru dokumentu do zmiennej na podstawie numeru wydania
@@ -53,7 +53,7 @@ SET @ObjectId =
 	 FROM dbo.Document 
 	 WHERE IdDoc = @IdDoc); 
 
---Przypisanie zakresu wydania z domyúlnego zakresu typoszeregu
+--Przypisanie zakresu wydania z domy≈õlnego zakresu typoszeregu
 SET @StateName =
 	(	SELECT DocumentValue 
 		FROM DocumentItem		  as DI
@@ -72,7 +72,7 @@ IF NOT EXISTS
 	 WHERE IdDoc = @IdDoc)
 BEGIN
 	ROLLBACK TRAN
-	PRINT 'B£•D: Nie ma takiego numeru dokumentu'
+	PRINT 'B≈ÅƒÑD: Nie ma takiego numeru dokumentu'
 	RETURN
 END;
 
@@ -83,17 +83,17 @@ IF NOT EXISTS
 		    CodeValue IN ('FULL', 'BASIC', 'DESC'))
 BEGIN
 	ROLLBACK TRAN
-	PRINT 'B£•D: Podano b≥Ídny zakres wydania'
+	PRINT 'B≈ÅƒÑD: Podano b≈Çƒôdny zakres wydania'
 	RETURN
 END; 
 
---Weryfikacja czy wskazane wydanie ma juø wygenerowanπ listÍ zadaÒ
+--Weryfikacja czy wskazane wydanie ma ju≈º wygenerowanƒÖ listƒô zada≈Ñ
 IF EXISTS 
    (SELECT ObjectId FROM dbo.Task
     WHERE ObjectId = @ObjectId)
 BEGIN
 	ROLLBACK TRAN
-	PRINT 'B£•D: Dla tego dokumentu juø zosta≥y wygenerowane zadania'
+	PRINT 'B≈ÅƒÑD: Dla tego dokumentu ju≈º zosta≈Çy wygenerowane zadania'
 	RETURN
 END;
 
@@ -109,21 +109,21 @@ SET @CodeDT =
 IF @CodeDT = 'PCLINE'
 BEGIN
 	ROLLBACK TRAN
-	PRINT 'B£•D: Wskazany dokument to typoszereg, zadania generuje siÍ w wydaniu'
+	PRINT 'B≈ÅƒÑD: Wskazany dokument to typoszereg, zadania generuje siƒô w wydaniu'
 	RETURN
 END;
 
---Weryfikacja czy wskazane wydanie ma odpowiedni status do generowania zadaÒ
+--Weryfikacja czy wskazane wydanie ma odpowiedni status do generowania zada≈Ñ
 IF  @CodeDT = 'PCRELEASE' AND 
 	@IdDocState <> 2 OR @IdDocState IS NULL
 BEGIN
 	ROLLBACK TRAN
 
---Zmienna do okreúlenia statusu dokumentu w formacie tekstowym
+--Zmienna do okre≈õlenia statusu dokumentu w formacie tekstowym
 DECLARE @PrintMessage NVARCHAR(20);
 SET @PrintMessage = (SELECT Name FROM dbo.TaskState WHERE IdTaskState = @IdDocState)
 
-	PRINT 'B£•D: Zadania moøna generowaÊ tylko gdy dokument ma status "Realizowane". ' +
+	PRINT 'B≈ÅƒÑD: Zadania mo≈ºna generowaƒá tylko gdy dokument ma status "Realizowane". ' +
 	'Obecnie status dokumentu to: ' + '"'+ @PrintMessage +'"'
 	RETURN
 END;
@@ -144,16 +144,16 @@ SET	IdDocState = @IdDocState
 		  @CodeDT = 'PCRELEASE'
 
 /* UPDATE in 1.4
-Generowanie zadaÒ do wydania w zaleønoúci od wskazanego zakresu. 
-Wydanie musi byÊ w statusie "Realizowane"
-Zadania domyúlnie majπ status "Nowy"
+Generowanie zada≈Ñ do wydania w zale≈ºno≈õci od wskazanego zakresu. 
+Wydanie musi byƒá w statusie "Realizowane"
+Zadania domy≈õlnie majƒÖ status "Nowy"
 Generator implementuje liste na bazie tabeli dbo.TaskList
 */
 IF 
 	@CodeDT	= 'PCRELEASE' and 
 	@IdDocState = 2
 BEGIN
-	IF @StateName  = 'Pe≥ny'
+	IF @StateName  = 'Pe≈Çny'
 		INSERT INTO dbo.Task (IdTaskState, ObjectId, Name)
 		SELECT 1, @ObjectId, TS.TaskName + @DocumentValueId_6 
 		FROM dbo.TasksList as TS
@@ -175,13 +175,13 @@ END
 --Koniec transakcji
 COMMIT TRAN
 
-  SELECT ObjectId as [Numer dokumentu], Name as [Wygenerowana lista zadaÒ]
+  SELECT ObjectId as [Numer dokumentu], Name as [Wygenerowana lista zada≈Ñ]
   FROM dbo.Task
   WHERE ObjectId = @ObjectId
 
 END TRY
 
--- Obs≥uga b≥Ídu wycofuje transakcje i wyúwietla komunikat o nim
+-- Obs≈Çuga b≈Çƒôdu wycofuje transakcje i wy≈õwietla komunikat o nim
 BEGIN CATCH 
 
 	IF ERROR_NUMBER() <> 0
@@ -189,16 +189,16 @@ BEGIN CATCH
 			ROLLBACK TRAN
 		END
 
-	PRINT 'Numer b≥Ídu    : ' + CAST(ERROR_NUMBER() as varchar(30));
-	PRINT 'Komunikat b≥Ídu: ' + ERROR_MESSAGE();
-	PRINT 'WaønoúÊ b≥Ídu  : ' + CAST(ERROR_SEVERITY() AS VARCHAR(10));
-	PRINT 'Stan b≥Ídu     : ' + CAST(ERROR_STATE() AS VARCHAR(10));
-	PRINT 'Wiersz b≥Ídu   : ' + CAST(ERROR_LINE() AS VARCHAR(10));
+	PRINT 'Numer b≈Çƒôdu    : ' + CAST(ERROR_NUMBER() as varchar(30));
+	PRINT 'Komunikat b≈Çƒôdu: ' + ERROR_MESSAGE();
+	PRINT 'Wa≈ºno≈õƒá b≈Çƒôdu  : ' + CAST(ERROR_SEVERITY() AS VARCHAR(10));
+	PRINT 'Stan b≈Çƒôdu     : ' + CAST(ERROR_STATE() AS VARCHAR(10));
+	PRINT 'Wiersz b≈Çƒôdu   : ' + CAST(ERROR_LINE() AS VARCHAR(10));
 
 END CATCH
 
 /*########################################################################
-Alternatywna metoda ktÛra generuje liste zadaÒ poprzez kursor AddNewTask
+Alternatywna metoda kt√≥ra generuje liste zada≈Ñ poprzez kursor AddNewTask
 IF
 	@CodeDT	= 'PCRELEASE' and 
 	@IdDocState = 2
