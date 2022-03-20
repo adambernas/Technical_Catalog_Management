@@ -1,24 +1,24 @@
---Tytu³: Raport wszystkich zadañ w wydaniach
---Autor: Adam Bernaœ
+ï»¿--TytuÅ‚: Raport wszystkich zadaÅ„ w wydaniach
+--Autor: Adam BernaÅ›
 --Update: 03-03-2022
 --Version v1.1
 
---Podgl¹du widoku
+--PodglÄ…du widoku
 /*
 SELECT * FROM View_TaskReport
 */
 
 USE TechnicalCatalogManagement
 GO
---Usuñ widok jeœli istnieje
+--UsuÅ„ widok jeÅ›li istnieje
 IF OBJECT_ID('View_TaskReport') IS NOT NULL DROP VIEW View_TaskReport
 GO
 
---Tworzenie widoku z opcj¹ SCHEMABINDING oraz CHECK OPTION
+--Tworzenie widoku z opcjÄ… SCHEMABINDING oraz CHECK OPTION
 CREATE VIEW View_TaskReport WITH SCHEMABINDING
 AS
 
---Tworzenie tablicy ³¹cz¹cej potrzebne tabele
+--Tworzenie tablicy Å‚Ä…czÄ…cej potrzebne tabele
 WITH Tab AS
 (
 SELECT	
@@ -43,15 +43,15 @@ SELECT  Numer_dok,
 		Typoszereg, 
 		Nazwa_dok, 
 		ISNULL(Status_dok,'') as Status_dok, 
-		ISNULL(IIF(Status_dok = 'Nowy','Zadania nie zosta³y wygenerowane',Nazwa_zadania),'') as Nazwa_zadania, 
+		ISNULL(IIF(Status_dok = 'Nowy','Zadania nie zostaÅ‚y wygenerowane',Nazwa_zadania),'') as Nazwa_zadania, 
 		ISNULL(Status_zadania,'')  as Status_zadania
 FROM Tab
 
 WITH CHECK OPTION;
 
 /*
-Alternatywnie aby zrezygnowaæ z JOINA DocumentItem by stworzyæ kolumne 'Typoszereg' mo¿na wyci¹gn¹æ kod typoszeregu z kolumny 'Nazwa_dok'
-Przyk³ad metody poni¿ej. W testach poprawia wydajnoœc wzglêdem podstawowej wersji ale kod jest mniej czytelny.
+Alternatywnie aby zrezygnowaÄ‡ z JOINA DocumentItem by stworzyÄ‡ kolumne 'Typoszereg' moÅ¼na wyciÄ…gnÄ…Ä‡ kod typoszeregu z kolumny 'Nazwa_dok'
+PrzykÅ‚ad metody poniÅ¼ej. W testach poprawia wydajnoÅ›c wzglÄ™dem podstawowej wersji ale kod jest mniej czytelny.
 
 LEFT( (RIGHT(DocName,CHARINDEX(' ',DocName,1))), (CHARINDEX('-',(RIGHT(DocName,CHARINDEX(' ',DocName,1)-1))))) as Typoszereg 
 */
