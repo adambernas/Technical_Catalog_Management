@@ -1,18 +1,18 @@
---Tytu³: Generator losowych danych do bazy TechnicalCatalogManagement
---Opis: Procedura tworzy losowe typoszeregi z gotowymi wydaniami o losowym statusie i losowym zakresem oraz gotow¹ list¹ zadañ o losowym statusie.
---		Do okreœlonych producentów przypisywane s¹ tylko te okreœlone grupy produktów zgodnie z ich porfolio.
---Autor: Adam Bernaœ
+ï»¿--TytuÅ‚: Generator losowych danych do bazy TechnicalCatalogManagement
+--Opis: Procedura tworzy losowe typoszeregi z gotowymi wydaniami o losowym statusie i losowym zakresem oraz gotowÄ… listÄ… zadaÅ„ o losowym statusie.
+--		Do okreÅ›lonych producentÃ³w przypisywane sÄ… tylko te okreÅ›lone grupy produktÃ³w zgodnie z ich porfolio.
+--Autor: Adam BernaÅ›
 --Update: 27-02-2022
 --Wersja: 1.3
 
---Skrót do obs³ugi procedury
+--SkrÃ³t do obsÅ‚ugi procedury
 
 /*
 exec AddNewDataForBaseTCM
-GO "tu wprowadŸ liczbê nowych typoszeregów do wygenerowania"
+GO "tu wprowadÅº liczbÄ™ nowych typoszeregÃ³w do wygenerowania"
 */
 
---Usuñ procedure je¿eli istnieje
+--UsuÅ„ procedure jeÅ¼eli istnieje
 IF OBJECT_ID ('dbo.AddNewDataForBaseTCM') IS NOT NULL 
    DROP PROC dbo.AddNewDataForBaseTCM
 GO
@@ -33,20 +33,20 @@ CREATE PROC AddNewDataForBaseTCM
 --Zmienne na atrybuty do tabeli DocumentItem
 	@DocumentValueId_1 as nvarchar(20) = NULL, --kod typoszeregu
 	@DocumentValueId_2 as nvarchar(20) = NULL, --nazwa typoszeregu
-	@DocumentValueId_3 as nvarchar(20) = NULL, --zakres domyœlny
+	@DocumentValueId_3 as nvarchar(20) = NULL, --zakres domyÅ›lny
 	@DocumentValueId_4 as nvarchar(20) = NULL, --producent
 	@DocumentValueId_5 as nvarchar(20) = NULL, --grupa
 	@DocumentValueId_6 as nvarchar(20) = NULL, --kod wydania
 	@DocumentValueId_7 as nvarchar(20) = NULL, --nazwa wydania
-	@YearUP as INT = 2010,					   --bie¿¹cy rok do generowania wydania
-	@YearDOWN as INT = NULL					   --pocz¹tkowy rok do generowania wydania
+	@YearUP as INT = 2010,					   --bieÅ¼Ä…cy rok do generowania wydania
+	@YearDOWN as INT = NULL					   --poczÄ…tkowy rok do generowania wydania
 
 AS
 BEGIN TRAN
 	BEGIN TRY
 
 SET NOCOUNT ON
---Generowanie losowych statusów zadañ i wydania
+--Generowanie losowych statusÃ³w zadaÅ„ i wydania
 SET @IdDocState = (SELECT TOP 1 TS.IdTaskState FROM TaskState as TS ORDER BY NEWID()); 
 
 --Generator losowego kodu typoszeregu
@@ -57,7 +57,7 @@ SET	@DocumentValueId_2= (SELECT
 
 SET @YearDOWN = year(GETDATE());
 
---Generowanie losego roku w przedziale od 2010 do roku bie¿acego
+--Generowanie losego roku w przedziale od 2010 do roku bieÅ¼acego
 SET @DocumentValueId_7 = ROUND(((@YearUP - @YearDOWN-1) * RAND() + @YearDOWN ),0);	
 
 -- Generowanie losowego prodcenta z listy
@@ -70,16 +70,16 @@ WHERE DI.Value = @DocumentValueId_4) + '-' + @DocumentValueId_2;
 -- Generowanie losowego zakresu z listy
 SET @DocumentValueId_3 = (SELECT TOP 1 [value] FROM DictionaryItem WHERE IdDict = 1 ORDER BY NEWID()); 
 
--- Generowanie losowej okreœlonej grupy któr¹ spe³niaj¹ producenci
+-- Generowanie losowej okreÅ›lonej grupy ktÃ³rÄ… speÅ‚niajÄ… producenci
 IF @DocumentValueId_4 IN ('Danfoss', 'Frascold', 'Copeland', 'Cubigel')
 	SET @DocumentValueId_5 = (SELECT TOP 1 [value] FROM DictionaryItem WHERE IdDicItem IN (5, 8) 
-							  ORDER BY NEWID()) --(Sprê¿arka, Agregat)
+							  ORDER BY NEWID()) --(SprÄ™Å¼arka, Agregat)
 ELSE IF @DocumentValueId_4 IN ('Mitsubishi', 'LG', 'Samsung')
 	SET @DocumentValueId_5 = (SELECT TOP 1 [value] FROM DictionaryItem WHERE IdDicItem IN (14, 15, 17) 
-							 ORDER BY NEWID()) --(Klimatyzacja, Pompa ciep³a, Systemy VRF)
+							 ORDER BY NEWID()) --(Klimatyzacja, Pompa ciepÅ‚a, Systemy VRF)
 ELSE IF @DocumentValueId_4 IN ('ECO', 'Thermofin', 'Alfa-Laval')
 	SET @DocumentValueId_5 = (SELECT TOP 1 [value] FROM DictionaryItem WHERE IdDicItem IN (16, 20) 
-							  ORDER BY NEWID()); --(Ch³odnice powietrza, Skraplacze)
+							  ORDER BY NEWID()); --(ChÅ‚odnice powietrza, Skraplacze)
 --Generowanie kodu wydania
 SET @DocumentValueId_6 = (SELECT DictionaryItem.CodeValue FROM DictionaryItem WHERE DictionaryItem.Value = @DocumentValueId_4) 
 	+ '-' + @DocumentValueId_2 + '-' + @DocumentValueId_7;
@@ -115,14 +115,14 @@ VALUES
 SET @IdDoc_RELEASE = SCOPE_IDENTITY();
 SET @ObjectId = 'DOC'+ CAST(@IdDoc_RELEASE as nvarchar(15))
 
--- W typoszeregu mo¿e byæ kilka wydañ wiêc nie mo¿na przypisaæ 1 relacji jak przy wydaniu
+-- W typoszeregu moÅ¼e byÄ‡ kilka wydaÅ„ wiÄ™c nie moÅ¼na przypisaÄ‡ 1 relacji jak przy wydaniu
 
 -- Generowanie nazwy dokumentu stworzonego wydania
 UPDATE dbo.Document
 SET dbo.Document.ObjectId = @ObjectId
 WHERE dbo.Document.IdDoc = @IdDoc_RELEASE;
 
--- Wype³nianie pola szablonu dokumentu
+-- WypeÅ‚nianie pola szablonu dokumentu
 INSERT INTO
 	dbo.DocumentItem(IdDTI, IdDoc, DocumentValue)
 VALUES
@@ -138,8 +138,8 @@ VALUES
 	(10, @IdDoc_RELEASE, @DocumentValueId_5),
 	(11, @IdDoc_RELEASE, @DocumentValueId_2);
 
---Utworzenie zadañ do wydania w zale¿noœci od zakresu 
---Zadania mog¹ byæ w procesie gdy stan dokumentu jest: (2-Realizowany, 3-Wstrzymany, 5-Wykonany)
+--Utworzenie zadaÅ„ do wydania w zaleÅ¼noÅ›ci od zakresu 
+--Zadania mogÄ… byÄ‡ w procesie gdy stan dokumentu jest: (2-Realizowany, 3-Wstrzymany, 5-Wykonany)
 IF 
 	@IdDT_RELEASE = 2 and 
 	@IdDocState in (2,3,5)
@@ -173,7 +173,7 @@ END
 
 	END TRY
 
--- Obs³uga b³êdu z wycofaniem transakcji i opisem b³êdu
+-- ObsÅ‚uga bÅ‚Ä™du z wycofaniem transakcji i opisem bÅ‚Ä™du
 BEGIN CATCH 
 
 IF ERROR_NUMBER() <> 0
@@ -181,11 +181,11 @@ IF ERROR_NUMBER() <> 0
 		ROLLBACK TRAN
 	END
 
-PRINT 'Numer b³êdu    : ' + CAST(ERROR_NUMBER() as varchar(30));
-PRINT 'Komunikat b³êdu: ' + ERROR_MESSAGE();
-PRINT 'Wa¿noœæ b³êdu  : ' + CAST(ERROR_SEVERITY() AS VARCHAR(10));
-PRINT 'Stan b³êdu     : ' + CAST(ERROR_STATE() AS VARCHAR(10));
-PRINT 'Wiersz b³êdu   : ' + CAST(ERROR_LINE() AS VARCHAR(10));
+PRINT 'Numer bÅ‚Ä™du    : ' + CAST(ERROR_NUMBER() as varchar(30));
+PRINT 'Komunikat bÅ‚Ä™du: ' + ERROR_MESSAGE();
+PRINT 'WaÅ¼noÅ›Ä‡ bÅ‚Ä™du  : ' + CAST(ERROR_SEVERITY() AS VARCHAR(10));
+PRINT 'Stan bÅ‚Ä™du     : ' + CAST(ERROR_STATE() AS VARCHAR(10));
+PRINT 'Wiersz bÅ‚Ä™du   : ' + CAST(ERROR_LINE() AS VARCHAR(10));
 
 END CATCH
 --Koniec transakcji
